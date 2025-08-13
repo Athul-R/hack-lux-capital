@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { ModalAIContext } from "../services/modalAIService";
+import { ModalAIContext } from "./modalAIService";
 
 export default function TextPrompt({ sheetData, setSheetData }) {
   const [prompt, setPrompt] = useState("");
