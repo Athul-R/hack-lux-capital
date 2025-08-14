@@ -1,5 +1,5 @@
 flask==3.0.3
 python-dotenv==1.0.1
 # For Modal backend (CLI/SDK used locally). FastAPI/Uvicorn are installed inside the Modal image.
-modal==0.62.2
+modal==1.1.1
 
