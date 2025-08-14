@@ -25,6 +25,6 @@ fi
 modal token set --token-id "$MODAL_TOKEN_ID" --token-secret "$MODAL_TOKEN_SECRET"
 
 # Deploy the Modal server
-modal deploy "$SCRIPT_DIR/../modal_server.py"
+modal deploy "$SCRIPT_DIR/python-server/modal_server.py"
 
 echo "Deployment complete. Update your Chrome extension background.js with the endpoint shown by 'modal app list' or deploy output."

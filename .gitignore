@@ -9,8 +9,8 @@ build/
 # Env files / secrets
 .env
 *.env
-google-sheets-llm/python-server/.env
-google-sheets-llm/python-server/modal.env
+# google-sheets-llm/python-server/.env
+# google-sheets-llm/python-server/modal.env
 
 # OS/editor junk
 .DS_Store
