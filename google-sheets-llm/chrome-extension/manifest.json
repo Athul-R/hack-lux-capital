@@ -6,7 +6,8 @@
   "permissions": [
     "scripting",
     "storage",
-    "activeTab"
+    "activeTab",
+    "tabs"
   ],
   "host_permissions": [
     "https://docs.google.com/spreadsheets/*",
@@ -32,8 +33,8 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["chat.css", "icons/*"],
-      "matches": ["<all_urls>"]
+      "resources": ["chat.css", "sidebar.html", "sidebar.js", "icons/*"],
+      "matches": ["https://docs.google.com/*"]
     }
   ]
 }

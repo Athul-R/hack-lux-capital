@@ -14,22 +14,34 @@ class GoogleSheetsAIAssistant {
 
   waitForSheetsLoad() {
     const checkInterval = setInterval(() => {
+      // More comprehensive Google Sheets detection
       const sheetsLoaded = document.querySelector('.grid3-wrapper') ||
         document.querySelector('#t-main-container') ||
-        document.querySelector('.docs-texteventtarget-iframe');
+        document.querySelector('.docs-texteventtarget-iframe') ||
+        document.querySelector('[data-sheets-root]') ||
+        document.querySelector('.waffle') ||
+        document.querySelector('#sheets-viewport');
 
       if (sheetsLoaded && !this.isInitialized) {
         clearInterval(checkInterval);
+        console.log('Google Sheets AI Assistant: Sheets detected, initializing...');
         setTimeout(() => {
           this.initializeUI();
           this.captureSheetMetadata();
           this.isInitialized = true;
+          console.log('Google Sheets AI Assistant: Initialized successfully');
         }, 1500);
       }
 
-      if (++this.retryCount > 60) {
+      if (++this.retryCount > 120) { // Increased timeout
         clearInterval(checkInterval);
         console.warn('Google Sheets AI Assistant: Timeout waiting for sheets to load');
+        // Try to initialize anyway if we're on a sheets URL
+        if (window.location.href.includes('docs.google.com/spreadsheets') && !this.isInitialized) {
+          this.initializeUI();
+          this.isInitialized = true;
+          console.log('Google Sheets AI Assistant: Force initialized on sheets URL');
+        }
       }
     }, 500);
   }
@@ -157,8 +169,8 @@ class GoogleSheetsAIAssistant {
     return content;
   }
 
-  queryAI(prompt) {
-    return new Promise((resolve) => {
+  async queryAI(prompt) {
+    return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({
         type: "PROMPT_TO_SERVER",
         payload: {
@@ -167,30 +179,76 @@ class GoogleSheetsAIAssistant {
           metadata: this.currentSheetMetadata,
           model: "qwen-2.5-coder-14b"
         }
-      }, (response) => resolve(response));
+      }, (response) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+        if (response && response.success) {
+          resolve(response);
+        } else {
+          reject(new Error(response?.error || 'Unknown error'));
+        }
+      });
     });
   }
 
   async captureSheetMetadata() {
     try {
-      const sheetTitle = document.querySelector('#docs-title-input-label-inner')?.textContent || 'Unknown Sheet';
-      const activeSheet = document.querySelector('.grid3-name-box input')?.value || 'Sheet1';
+      // Multiple selectors for sheet title
+      const sheetTitle = document.querySelector('#docs-title-input-label-inner')?.textContent ||
+        document.querySelector('.docs-title-input')?.value ||
+        document.querySelector('[data-tooltip="Rename"]')?.textContent ||
+        document.title.replace(' - Google Sheets', '') ||
+        'Unknown Sheet';
+
+      // Multiple selectors for active sheet
+      const activeSheet = document.querySelector('.grid3-name-box input')?.value ||
+        document.querySelector('.docs-sheet-tab-name')?.textContent ||
+        document.querySelector('.docs-sheet-tab.docs-sheet-active-tab .docs-sheet-tab-name')?.textContent ||
+        'Sheet1';
 
       const headers = [];
-      const headerCells = document.querySelectorAll('.grid3-hh-cell');
-      headerCells.forEach((cell) => {
-        const text = cell.textContent?.trim();
-        if (text) headers.push(text);
-      });
+      // Try multiple selectors for header cells
+      const headerSelectors = [
+        '.grid3-hh-cell',
+        '.docs-sheet-header-cell',
+        '[role="columnheader"]',
+        '.waffle .r0 .s0'
+      ];
+
+      for (const selector of headerSelectors) {
+        const headerCells = document.querySelectorAll(selector);
+        if (headerCells.length > 0) {
+          headerCells.forEach((cell, index) => {
+            if (index < 26) { // Limit to 26 columns (A-Z)
+              const text = cell.textContent?.trim();
+              if (text && text !== '') headers.push(text);
+            }
+          });
+          break; // Use first successful selector
+        }
+      }
 
       this.currentSheetMetadata = {
-        sheetTitle,
-        activeSheet,
-        headers: headers.slice(0, 26),
+        sheetTitle: sheetTitle.trim(),
+        activeSheet: activeSheet.trim(),
+        headers: headers,
         timestamp: Date.now(),
+        url: window.location.href
       };
+
+      console.log('Captured metadata:', this.currentSheetMetadata);
     } catch (e) {
       console.warn('Failed to capture metadata', e);
+      // Fallback metadata
+      this.currentSheetMetadata = {
+        sheetTitle: 'Google Sheet',
+        activeSheet: 'Sheet1',
+        headers: [],
+        timestamp: Date.now(),
+        url: window.location.href
+      };
     }
   }
 
@@ -272,6 +330,14 @@ class GoogleSheetsAIAssistant {
     if (el) el.textContent = message;
   }
 }
+
+// Message listener for popup communication
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === 'PING') {
+    sendResponse({status: 'active'});
+  }
+  return true;
+});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
