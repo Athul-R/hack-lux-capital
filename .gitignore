@@ -7,8 +7,8 @@ build/
 **/.venv/
 
 # Env files / secrets
-.env
-*.env
+# .env
+# *.env
 # google-sheets-llm/python-server/.env
 # google-sheets-llm/python-server/modal.env
 

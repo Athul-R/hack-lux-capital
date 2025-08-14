@@ -143,13 +143,13 @@ def coding_llm_inference(
 
     # Build a context-augmented prompt (mirrors markdown intent)
     coding_prompt = (
-        f"Your expertise includes:
-            - Excel formula generation (VLOOKUP, INDEX/MATCH, SUMIF, etc.)
-            - VBA/Visual Basic programming
-            - Google Apps Script
-            - Data analysis and manipulation
-            - Financial and investment banking calculations
-            - Code generation in multiple programming languages\n\n"
+        "Your expertise includes:\n"
+        "- Excel formula generation (VLOOKUP, INDEX/MATCH, SUMIF, etc.)\n"
+        "- VBA/Visual Basic programming\n"
+        "- Google Apps Script\n"
+        "- Data analysis and manipulation\n"
+        "- Financial and investment banking calculations\n"
+        "- Code generation in multiple programming languages\n\n"
         f"Spreadsheet Context: {json.dumps(metadata, indent=2) if metadata else 'No spreadsheet loaded'}\n\n"
         f"User Request: {prompt}\n\n"
         "Please provide a practical solution with:\n"
