@@ -9,7 +9,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 async function handleAIQuery(payload) {
-  const modalEndpoint = "https://your-modal-app--coding-query.modal.run";
+  const modalEndpoint = "https://athul-r--coding-query.modal.run";
   try {
     const response = await fetch(modalEndpoint, {
       method: "POST",
