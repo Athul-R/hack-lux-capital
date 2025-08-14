@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 300px;
+      padding: 20px;
+      font-family: 'Google Sans', sans-serif;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .active {
+      background: #e8f5e8;
+      color: #137333;
+      border: 1px solid #34a853;
+    }
+    .inactive {
+      background: #fce8e6;
+      color: #d93025;
+      border: 1px solid #ea4335;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background: #1a73e8;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>🤖 AI Sheets Assistant</h2>
+  </div>
+  
+  <div id="status" class="status inactive">
+    Not connected to Google Sheets
+  </div>
+  
+  <button onclick="openSheets()">Open Google Sheets</button>
+  <button onclick="viewHelp()">View Help</button>
+  
+  <script>
+    function openSheets() {
+      chrome.tabs.create({
+        url: 'https://docs.google.com/spreadsheets/u/0/'
+      });
+    }
+    
+    function viewHelp() {
+      chrome.tabs.create({
+        url: 'https://support.google.com/docs/topic/9054603'
+      });
+    }
+    
+    // Check if current tab is Google Sheets
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      const currentTab = tabs[0];
+      const statusEl = document.getElementById('status');
+      
+      if (currentTab.url && currentTab.url.includes('docs.google.com/spreadsheets')) {
+        statusEl.textContent = 'Active on Google Sheets';
+        statusEl.className = 'status active';
+      }
+    });
+  </script>
+</body>
+</html>

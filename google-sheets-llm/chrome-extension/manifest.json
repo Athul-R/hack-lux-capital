@@ -1,0 +1,40 @@
+{
+  "name": "Google Sheets AI Assistant",
+  "description": "Chat-based AI assistant for Google Sheets automation with advanced coding capabilities",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "permissions": [
+    "scripting",
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://docs.google.com/spreadsheets/*",
+    "https://sheets.googleapis.com/*",
+    "https://*.modal.run/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "AI Sheets Assistant",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://docs.google.com/spreadsheets/*"
+      ],
+      "js": ["content.js"],
+      "css": ["chat.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["chat.css", "icons/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+
