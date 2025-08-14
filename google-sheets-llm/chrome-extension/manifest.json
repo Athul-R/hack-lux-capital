@@ -33,7 +33,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["chat.css", "sidebar.html", "sidebar.js", "icons/*"],
+      "resources": ["chat.css", "sidebar.html", "sidebar.js", "popup.js", "icons/*"],
       "matches": ["https://docs.google.com/*"]
     }
   ]
