@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Dict, List, Any
 
 import modal
+from pydantic import BaseModel
 
 
 # Modal configuration
@@ -182,22 +183,39 @@ def coding_llm_inference(
     }
 
 
+
+class CodingQueryRequest(BaseModel):
+    session_id: str | None = None
+    prompt: str
+    metadata: dict | None = None
+    model: str = "phi-3.5-mini"
 @app.function(image=image, volumes={session_dir: session_volume})
 @modal.web_endpoint(method="POST", label="coding-query")
-def coding_query_endpoint(
-    session_id: str | None = None,
-    prompt: str = "",
-    metadata: dict | None = None,
-    model: str = "phi-3.5-mini",
-):
-    """Web endpoint for the Chrome extension."""
-    if not session_id:
-        session_id = str(uuid.uuid4())
-    if not prompt:
+def coding_query_endpoint(req: CodingQueryRequest):
+    if not req.prompt:
         return {"error": "No prompt provided"}
 
-    result = coding_llm_inference.remote(session_id, prompt, metadata or {}, model)
+    session_id = req.session_id or str(uuid.uuid4())
+    result = coding_llm_inference.remote(session_id, req.prompt, req.metadata or {}, req.model)
     return result
+
+
+# @app.function(image=image, volumes={session_dir: session_volume})
+# @modal.web_endpoint(method="POST", label="coding-query")
+# def coding_query_endpoint(
+#     session_id: str | None = None,
+#     prompt: str = "",
+#     metadata: dict | None = None,
+#     model: str = "phi-3.5-mini",
+# ):
+#     """Web endpoint for the Chrome extension."""
+#     if not session_id:
+#         session_id = str(uuid.uuid4())
+#     if not prompt:
+#         return {"error": "No prompt provided"}
+
+#     result = coding_llm_inference.remote(session_id, prompt, metadata or {}, model)
+#     return result
 
 
 @app.local_entrypoint()
