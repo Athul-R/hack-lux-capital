@@ -7,13 +7,18 @@
     "scripting",
     "storage",
     "activeTab",
-    "tabs"
+    "tabs",
+    "https://athul-r--coding-query.modal.run/*",
+    "https://jaydaftari19--coding-query.modal.run/* "
   ],
   "host_permissions": [
     "https://docs.google.com/spreadsheets/*",
     "https://sheets.googleapis.com/*",
-    "https://*.modal.run/*"
+    "https://*.modal.run/*",
+    "https://athul-r--coding-query.modal.run/*",
+    "https://jaydaftari19--coding-query.modal.run"
   ],
+
   "background": {
     "service_worker": "background.js"
   },

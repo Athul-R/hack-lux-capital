@@ -133,7 +133,7 @@ class GoogleSheetsAIAssistant {
         console.error('AI Query Error:', response.error);
       }
     } catch (error) {
-      this.addMessage('assistant', 'Connection error. Please check your internet and try again.');
+      this.addMessage('assistant', '  ');
       console.error('Send Message Error:', error);
     }
 

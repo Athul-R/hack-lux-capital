@@ -7,9 +7,10 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true; // Keep sendResponse alive for async
   }
 });
-
+// https://jaydaftari19--coding-query.modal.run    
+// https://athul-r--coding-query.modal.run" 
 async function handleAIQuery(payload) {
-  const modalEndpoint = "https://athul-r--coding-query.modal.run";
+  const modalEndpoint = "https://jaydaftari19--coding-query.modal.run";
   try {
     const response = await fetch(modalEndpoint, {
       method: "POST",
